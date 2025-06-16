@@ -2,25 +2,37 @@ import pandas as pd
 import numpy as np
 from scipy.stats import chi2_contingency, ttest_ind, f_oneway
 
-def run_statistical_tests(df, binary_columns=None, alpha=0.05, verbose=True):
+def run_statistical_tests(df, binary_columns=None, verbose=True):
     """
-    Run Chi-squared, T-test, and ANOVA tests, and print interpretations for statistically significant results.
-    """
-    df = df.copy()
-    df = df.dropna(how='all')
-    df.columns = df.columns.str.strip().str.replace(" ", "_")
+    Run Chi-squared, T-test, and ANOVA tests between variables in a DataFrame.
 
+    Parameters:
+        df (pd.DataFrame): The dataset
+        binary_columns (list): List of known binary columns (optional)
+        verbose (bool): If True, prints the top 15 results
+
+    Returns:
+        results_df (pd.DataFrame): Sorted table of all test results
+    """
+
+    df = df.copy()
+    df = df.dropna(how='all')  # Remove empty rows
+    df.columns = df.columns.str.strip().str.replace(" ", "_")  # Standardize column names
+
+    # Capitalize Yes/No in binary columns
     if binary_columns is not None:
         for col in binary_columns:
             if col in df.columns:
                 df[col] = df[col].astype(str).str.strip().str.capitalize()
 
+    # Detect column types
     numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
     binary_cols = [col for col in df.columns if df[col].nunique() == 2 and df[col].dtype == 'object']
     categorical_cols = [col for col in df.columns if df[col].dtype == 'object' and df[col].nunique() > 2]
 
     results = []
 
+    # Chi-squared tests (binary vs binary)
     for col1 in binary_cols:
         for col2 in binary_cols:
             if col1 != col2:
@@ -33,6 +45,7 @@ def run_statistical_tests(df, binary_columns=None, alpha=0.05, verbose=True):
                     "p-value": p
                 })
 
+    # T-tests (numeric vs binary)
     for num_col in numeric_cols:
         for bin_col in binary_cols:
             groups = df[[num_col, bin_col]].dropna().groupby(bin_col)[num_col]
@@ -46,6 +59,7 @@ def run_statistical_tests(df, binary_columns=None, alpha=0.05, verbose=True):
                     "p-value": p
                 })
 
+    # ANOVA (numeric vs categorical)
     for num_col in numeric_cols:
         for cat_col in categorical_cols:
             groups = [g.dropna() for _, g in df[[num_col, cat_col]].dropna().groupby(cat_col)[num_col]]
@@ -62,16 +76,7 @@ def run_statistical_tests(df, binary_columns=None, alpha=0.05, verbose=True):
     results_df = results_df.sort_values(by="p-value").reset_index(drop=True)
 
     if verbose:
-        print("🔍 תוצאות מובהקות סטטיסטית (p < {:.3f}):\n".format(alpha))
-        for _, row in results_df.iterrows():
-            if row['p-value'] < alpha:
-                explanation = ""
-                if row['Test'] == 'Chi-squared':
-                    explanation = f"קיים קשר מובהק בין המשתנים הבינאריים '{row['Variable 1']}' ו-'{row['Variable 2']}'"
-                elif row['Test'] == 'T-test':
-                    explanation = f"הממוצע של '{row['Variable 1']}' שונה באופן מובהק בין קבוצות '{row['Variable 2']}'"
-                elif row['Test'] == 'ANOVA':
-                    explanation = f"הממוצע של '{row['Variable 1']}' שונה בין רמות שונות של '{row['Variable 2']}'"
-                print(f"- {row['Test']}: {explanation} (p = {row['p-value']:.3e})")
+        print("Top 15 statistically significant tests:")
+        print(results_df.head(15))
 
     return results_df
