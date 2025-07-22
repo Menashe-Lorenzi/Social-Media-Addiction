@@ -20,31 +20,29 @@ The analysis utilizes a dataset containing information on students' social media
 ## Methodology
 This project employs a robust statistical approach to uncover nuanced relationships:
 
-Interaction Term Creation: An interaction term between Most_Used_Platform and Addicted_Score will be created to explore synergistic
+- Interaction Term Creation: An interaction term between Most_Used_Platform and Addicted_Score will be created to explore synergistic
 effects.
+- Logistic Regression: For the binary outcome variable (Affects_Academic_Performance), a logistic regression model will be utilized to assess the predictive power of platforms, addiction scores, and their interaction on the likelihood of academic impact.
 
-Logistic Regression: For the binary outcome variable (Affects_Academic_Performance), a logistic regression model will be utilized to assess the predictive power of platforms, addiction scores, and their interaction on the likelihood of academic impact.
+**Analysis for Ordinal Outcome (Mental_Health_Score):**
 
-Analysis for Ordinal Outcome (Mental_Health_Score):
+- Ordinal Logistic Regression: If statistical assumptions are met, an ordinal logistic regression model will be employed to examine the influence of platforms, addiction, and their interaction on Mental_Health_Score.
+- Mann–Whitney U Test: As an alternative, or to complement the ordinal logistic regression, Mann–Whitney U Test will be conducted. These non-parametric tests will be performed both within addiction strata (comparing platforms at specific addiction levels) and within platform strata (comparing addiction levels on specific platforms) to understand how differences in Mental_Health_Score manifest across these subgroups, especially given observed violations of homogeneity of variance.
 
-Ordinal Logistic Regression: If statistical assumptions are met, an ordinal logistic regression model will be employed to examine the influence of platforms, addiction, and their interaction on Mental_Health_Score.
-
-Mann–Whitney U Test: As an alternative, or to complement the ordinal logistic regression, Mann–Whitney U Test will be conducted. These non-parametric tests will be performed both within addiction strata (comparing platforms at specific addiction levels) and within platform strata (comparing addiction levels on specific platforms) to understand how differences in Mental_Health_Score manifest across these subgroups, especially given observed violations of homogeneity of variance.
-
-Expected Outcomes
+## Expected Outcomes
 This combined analysis aims to provide insights into:
 
 - Whether certain platforms are more detrimental to academic performance or mental health, particularly at higher addiction levels.
 - Whether the impact of social media addiction is consistent across different social media platforms.
 - A deeper understanding of the joint effect of platform usage and addiction on student well-being, informing potential interventions or awareness campaigns.
-
+___
 Original dataset: Kaggle ([linked above](https://www.kaggle.com/datasets/adilshamim8/social-media-addiction-vs-relationships)).
 License
 MIT License – feel free to use and modify.
-
+___
 Contact
 LinkedIn: Menashe Lorenzi | Email: menashelorenzi@gmail.com
-
+___
 MIT License
 
 Copyright (c) 2025 Menashe Lorenzi
